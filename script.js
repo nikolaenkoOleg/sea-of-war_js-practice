@@ -66,7 +66,11 @@ const show = {
 
 const fire = (event) => {
   const { target } = event;
-  if (target.classList.contains('miss') || target.tagName !== 'TD') {
+  if (target.classList.contains('miss')
+    || target.tagName !== 'TD'
+    || target.classList.contains('hit')
+    || target.classList.contains('dead')
+    || feild.shipcount === 0) {
     return;
   }
   show.miss(target);
