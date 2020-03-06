@@ -64,15 +64,11 @@ const feild = {
     if (direction === horizontal) {
       x = Math.floor(Math.random() * tableRow);
       y = Math.floor(Math.random() * (tableRow - shipSize));
-      console.log(x);
-      console.log(y);
     }
 
     if (direction === vertical) {
       x = Math.floor(Math.random() * (tableRow - shipSize));
       y = Math.floor(Math.random() * tableRow);
-      console.log(x);
-      console.log(y);
     }
 
 
