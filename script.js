@@ -117,7 +117,9 @@ const feild = {
         const y = 1; // вторая координата
         const startCoordY = location[i][y] - 1;
         for (let z = startCoordY; z < startCoordY + 3; z += 1) {
-          if (j >= 0 && j < 10 && z >= 0 && z < 10) {
+          const leftBorder = 0;
+          const rigthBorder = 10;
+          if (j >= leftBorder && j < rigthBorder && z >= leftBorder && z < rigthBorder) {
             const collisionCoord = `${j}${z}`;
             this.collision.add(collisionCoord);
           }
@@ -208,8 +210,6 @@ const init = () => {
     gameState.record = 0;
     gameState.render();
   });
-
-  console.log(feild);
 };
 
 init();
