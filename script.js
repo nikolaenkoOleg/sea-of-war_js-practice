@@ -28,9 +28,7 @@ const gameState = {
 };
 
 const feild = {
-  ships: [
-
-  ],
+  ships: [],
   shipcount: 0,
   optionShip: {
     count: [1, 2, 3, 4],
