@@ -111,9 +111,11 @@ const feild = {
     // добавление коллизий для кораблей по принципу: 3 ячейки сверху и cнизу от ячейки корабля
     // и по ячейке слева и справа
     for (let i = 0; i < location.length; i += 1) {
-      const startCoordX = location[i][0] - 1;
+      const x = 0; // первая координата
+      const startCoordX = location[i][x] - 1;
       for (let j = startCoordX; j < startCoordX + 3; j += 1) {
-        const startCoordY = location[i][1] - 1;
+        const y = 1; // вторая координата
+        const startCoordY = location[i][y] - 1;
         for (let z = startCoordY; z < startCoordY + 3; z += 1) {
           if (j >= 0 && j < 10 && z >= 0 && z < 10) {
             const collisionCoord = `${j}${z}`;
