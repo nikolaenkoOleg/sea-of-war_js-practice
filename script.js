@@ -29,24 +29,100 @@ const gameState = {
 
 const feild = {
   ships: [
-    {
-      locarion: ['26', '36', '46', '56'],
-      hit: ['', '', '', ''],
-    },
-    {
-      locarion: ['11', '12', '13'],
-      hit: ['', '', ''],
-    },
-    {
-      locarion: ['69', '79'],
-      hit: ['', ''],
-    },
-    {
-      locarion: ['32'],
-      hit: [''],
-    },
+
   ],
-  shipcount: 4,
+  shipcount: 0,
+  optionShip: {
+    count: [1, 2, 3, 4],
+    size: [4, 3, 2, 1],
+  },
+  collision: new Set(),
+  generateShip() {
+    for (let i = 0; i < this.optionShip.count.length; i += 1) {
+      for (let j = 0; j < this.optionShip.count[i]; j += 1) {
+        const size = this.optionShip.size[i];
+        const ship = this.generateOptionsShip(size);
+        this.ships.push(ship);
+        this.shipcount += 1;
+      }
+    }
+  },
+  generateOptionsShip(shipSize) {
+    const ship = {
+      hit: [],
+      location: [],
+    };
+
+    const horizontal = true;
+    const vertical = false;
+    const direction = Math.random() < 0.5;
+
+    let x;
+    let y;
+
+    const tableRow = 10;
+    if (direction === horizontal) {
+      x = Math.floor(Math.random() * tableRow);
+      y = Math.floor(Math.random() * (tableRow - shipSize));
+      console.log(x);
+      console.log(y);
+    }
+
+    if (direction === vertical) {
+      x = Math.floor(Math.random() * (tableRow - shipSize));
+      y = Math.floor(Math.random() * tableRow);
+      console.log(x);
+      console.log(y);
+    }
+
+
+    for (let i = 0; i < shipSize; i += 1) {
+      if (direction === horizontal) {
+        const newY = y + i;
+        ship.location.push(`${x}${newY}`);
+      }
+
+      if (direction === vertical) {
+        const newX = x + i;
+        ship.location.push(`${newX}${y}`);
+      }
+
+      ship.hit.push('');
+    }
+
+    if (this.checkCollision(ship.location)) {
+      return this.generateOptionsShip(shipSize);
+    }
+
+    this.addCollision(ship.location);
+
+    return ship;
+  },
+  checkCollision(location) {
+    for (const coord of location) {
+      if (this.collision.has(coord)) {
+        return true;
+      }
+    }
+
+    return false;
+  },
+  addCollision(location) {
+    // добавление коллизий для кораблей по принципу: 3 ячейки сверху и сзнизу от ячейки корабля
+    // и по ячейке слева и справа
+    for (let i = 0; i < location.length; i += 1) {
+      const startCoordX = location[i][0] - 1;
+      for (let j = startCoordX; j < startCoordX + 3; j += 1) {
+        const startCoordY = location[i][1] - 1;
+        for (let z = startCoordY; z < startCoordY + 3; z += 1) {
+          if (j >= 0 && j < 10 && z >= 0 && z < 10) {
+            const collisionCoord = `${j}${z}`;
+            this.collision.add(collisionCoord);
+          }
+        }
+      }
+    }
+  },
 };
 
 const show = {
@@ -78,7 +154,7 @@ const fire = (event) => {
 
   for (let i = 0; i < feild.ships.length; i += 1) {
     const ship = feild.ships[i];
-    const index = ship.locarion.indexOf(target.id);
+    const index = ship.location.indexOf(target.id);
     const isHitting = index >= 0;
     if (isHitting) {
       show.hit(target);
@@ -87,7 +163,7 @@ const fire = (event) => {
       const isDead = ship.hit.indexOf('') === -1;
       if (isDead) {
         gameState.updateData = 'dead';
-        for (const cell of ship.locarion) {
+        for (const cell of ship.location) {
           show.dead(document.getElementById(cell));
         }
 
@@ -110,10 +186,28 @@ const fire = (event) => {
 const init = () => {
   gameField.addEventListener('click', fire);
   gameState.render();
+  feild.generateShip();
 
-  again.addEventListener('click', () => {
-    location.reload();
+  again.addEventListener('click', () => { // перезагрузка игры, без релоада
+    gameState.record = localStorage.getItem('seaBattleRecord') || 0;
+    gameState.shot = 0;
+    gameState.hit = 0;
+    gameState.dead = 0;
+    gameState.render();
+
+    const cells = document.querySelectorAll('td');
+    cells.forEach((cell) => {
+      cell.removeAttribute('class');
+    });
   });
+
+  record.addEventListener('dblclick', () => {
+    localStorage.clear();
+    gameState.record = 0;
+    gameState.render();
+  });
+
+  console.log(feild);
 };
 
 init();
